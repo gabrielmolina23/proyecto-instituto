@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Sanciones</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="login-container">
+    <h2>Registro de Sanciones</h2>
+
+    <form id="form-sancion">
+      <input type="text" id="alumno" placeholder="Nombre del alumno" required>
+      <input type="date" id="fecha" required>
+      <input type="text" id="motivo" placeholder="Motivo" required>
+      <select id="tipo" required>
+        <option value="Leve">Leve</option>
+        <option value="Grave">Grave</option>
+        <option value="Condicional">Condicional</option>
+        <option value="Expulsión">Expulsión</option>
+      </select>
+      <button type="submit">Registrar Sanción</button>
+    </form>
+
+    <h3>Listado de Sanciones</h3>
+    <table border="1" width="100%">
+      <thead>
+        <tr>
+          <th>Alumno</th>
+          <th>Fecha</th>
+          <th>Motivo</th>
+          <th>Tipo</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-sanciones"></tbody>
+    </table>
+
+    <button onclick="volverMenu()">Volver al Menú</button>
+  </div>
+
+  <script>
+    let sanciones = JSON.parse(localStorage.getItem('sanciones')) || [];
+    let editIndex = null;
+
+    const form = document.getElementById('form-sancion');
+    const tabla = document.getElementById('tabla-sanciones');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const sancion = {
+        alumno: document.getElementById('alumno').value,
+        fecha: document.getElementById('fecha').value,
+        motivo: document.getElementById('motivo').value,
+        tipo: document.getElementById('tipo').value
+      };
+
+      if (editIndex === null) {
+        sanciones.push(sancion);
+      } else {
+        sanciones[editIndex] = sancion;
+        editIndex = null;
+      }
+
+      actualizarStorage();
+      form.reset();
+      renderTabla();
+    });
+
+    function renderTabla() {
+      tabla.innerHTML = '';
+      sanciones.forEach((sancion, index) => {
+        tabla.innerHTML += `
+          <tr>
+            <td>${sancion.alumno}</td>
+            <td>${sancion.fecha}</td>
+            <td>${sancion.motivo}</td>
+            <td>${sancion.tipo}</td>
+            <td>
+              <button onclick="editarSancion(${index})">Editar</button>
+              <button onclick="eliminarSancion(${index})">Eliminar</button>
+            </td>
+          </tr>`;
+      });
+    }
+
+    function editarSancion(index) {
+      const sancion = sanciones[index];
+      document.getElementById('alumno').value = sancion.alumno;
+      document.getElementById('fecha').value = sancion.fecha;
+      document.getElementById('motivo').value = sancion.motivo;
+      document.getElementById('tipo').value = sancion.tipo;
+      editIndex = index;
+    }
+
+    function eliminarSancion(index) {
+      if (confirm('¿Estás seguro de eliminar esta sanción?')) {
+        sanciones.splice(index, 1);
+        actualizarStorage();
+        renderTabla();
+      }
+    }
+
+    function actualizarStorage() {
+      localStorage.setItem('sanciones', JSON.stringify(sanciones));
+    }
+
+    function volverMenu() {
+      window.location.href = 'menu.html';
+    }
+
+    renderTabla();
+  </script>
+</body>
+</html>

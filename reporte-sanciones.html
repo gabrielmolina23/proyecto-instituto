@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reporte de Sanciones</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .grave {
+      background-color: #ffe6e6;
+      color: #d8000c;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Reporte de Sanciones por Alumno</h2>
+
+    <table border="1" width="100%">
+      <thead>
+        <tr>
+          <th>Alumno</th>
+          <th>Total de Sanciones</th>
+          <th>Leves</th>
+          <th>Graves</th>
+          <th>Condicional</th>
+          <th>Expulsión</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-reporte"></tbody>
+    </table>
+
+    <button onclick="volverMenu()">Volver al Menú</button>
+  </div>
+
+  <script>
+    const sanciones = JSON.parse(localStorage.getItem('sanciones')) || [];
+    const resumen = {};
+
+    sanciones.forEach(({ alumno, tipo }) => {
+      if (!resumen[alumno]) {
+        resumen[alumno] = { total: 0, Leve: 0, Grave: 0, Condicional: 0, Expulsión: 0 };
+      }
+      resumen[alumno].total++;
+      resumen[alumno][tipo]++;
+    });
+
+    const tabla = document.getElementById('tabla-reporte');
+
+    for (let alumno in resumen) {
+      const r = resumen[alumno];
+      const tr = document.createElement('tr');
+      if (r.Expulsión > 0 || r.Condicional > 0) tr.classList.add('grave');
+      tr.innerHTML = `
+        <td>${alumno}</td>
+        <td>${r.total}</td>
+        <td>${r.Leve}</td>
+        <td>${r.Grave}</td>
+        <td>${r.Condicional}</td>
+        <td>${r.Expulsión}</td>
+      `;
+      tabla.appendChild(tr);
+    }
+
+    function volverMenu() {
+      window.location.href = 'menu.html';
+    }
+  </script>
+</body>
+</html>

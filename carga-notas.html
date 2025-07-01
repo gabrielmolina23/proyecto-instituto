@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carga de Notas</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="login-container">
+    <h2>Carga de Notas (Semáforo)</h2>
+
+    <form id="form-nota">
+      <input type="text" id="alumno" placeholder="Nombre del alumno" required>
+      <input type="text" id="materia" placeholder="Materia" required>
+      <input type="number" id="nota" placeholder="Nota (0-10)" min="0" max="10" required>
+      <button type="submit">Registrar Nota</button>
+    </form>
+
+    <h3>Listado de Notas</h3>
+    <table border="1" width="100%">
+      <thead>
+        <tr>
+          <th>Alumno</th>
+          <th>Materia</th>
+          <th>Nota</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-notas"></tbody>
+    </table>
+
+    <button onclick="volverMenu()">Volver al Menú</button>
+  </div>
+
+  <script>
+    let notas = JSON.parse(localStorage.getItem('notas')) || [];
+    let editIndex = null;
+
+    const form = document.getElementById('form-nota');
+    const tabla = document.getElementById('tabla-notas');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const alumno = document.getElementById('alumno').value;
+      const materia = document.getElementById('materia').value;
+      const nota = parseFloat(document.getElementById('nota').value);
+
+      const estado = obtenerEstado(nota);
+
+      const registro = { alumno, materia, nota, estado };
+
+      if (editIndex === null) {
+        notas.push(registro);
+      } else {
+        notas[editIndex] = registro;
+        editIndex = null;
+      }
+
+      actualizarStorage();
+      form.reset();
+      renderTabla();
+    });
+
+    function obtenerEstado(nota) {
+      if (nota < 7) return 'Rojo';
+      if (nota >= 7 && nota < 8.5) return 'Amarillo';
+      return 'Verde';
+    }
+
+    function renderTabla() {
+      tabla.innerHTML = '';
+      notas.forEach((registro, index) => {
+        tabla.innerHTML += `
+          <tr>
+            <td>${registro.alumno}</td>
+            <td>${registro.materia}</td>
+            <td>${registro.nota}</td>
+            <td>${registro.estado}</td>
+            <td>
+              <button onclick="editarNota(${index})">Editar</button>
+              <button onclick="eliminarNota(${index})">Eliminar</button>
+            </td>
+          </tr>`;
+      });
+    }
+
+    function editarNota(index) {
+      const registro = notas[index];
+      document.getElementById('alumno').value = registro.alumno;
+      document.getElementById('materia').value = registro.materia;
+      document.getElementById('nota').value = registro.nota;
+      editIndex = index;
+    }
+
+    function eliminarNota(index) {
+      if (confirm('¿Estás seguro de eliminar esta nota?')) {
+        notas.splice(index, 1);
+        actualizarStorage();
+        renderTabla();
+      }
+    }
+
+    function actualizarStorage() {
+      localStorage.setItem('notas', JSON.stringify(notas));
+    }
+
+    function volverMenu() {
+      window.location.href = 'menu.html';
+    }
+
+    renderTabla();
+  </script>
+</body>
+</html>

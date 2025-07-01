@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ABM Padres</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="login-container">
+    <h2>Gestión de Padres/Tutores</h2>
+
+    <form id="form-padre">
+      <input type="text" id="nombre" placeholder="Nombre" required>
+      <input type="text" id="apellido" placeholder="Apellido" required>
+      <input type="text" id="dni" placeholder="DNI" required>
+      <input type="text" id="hijo" placeholder="Alumno a cargo" required>
+      <input type="email" id="email" placeholder="Email" required>
+      <button type="submit">Agregar Padre/Tutor</button>
+    </form>
+
+    <h3>Listado de Padres/Tutores</h3>
+    <table border="1" width="100%">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Apellido</th>
+          <th>DNI</th>
+          <th>Alumno a cargo</th>
+          <th>Email</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-padres"></tbody>
+    </table>
+
+    <button onclick="volverMenu()">Volver al Menú</button>
+  </div>
+
+  <script>
+    let padres = [];
+    let editIndex = null;
+
+    const form = document.getElementById('form-padre');
+    const tabla = document.getElementById('tabla-padres');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const padre = {
+        nombre: document.getElementById('nombre').value,
+        apellido: document.getElementById('apellido').value,
+        dni: document.getElementById('dni').value,
+        hijo: document.getElementById('hijo').value,
+        email: document.getElementById('email').value
+      };
+
+      if (editIndex === null) {
+        padres.push(padre);
+      } else {
+        padres[editIndex] = padre;
+        editIndex = null;
+      }
+
+      form.reset();
+      renderTabla();
+    });
+
+    function renderTabla() {
+      tabla.innerHTML = '';
+      padres.forEach((padre, index) => {
+        tabla.innerHTML += `
+          <tr>
+            <td>${padre.nombre}</td>
+            <td>${padre.apellido}</td>
+            <td>${padre.dni}</td>
+            <td>${padre.hijo}</td>
+            <td>${padre.email}</td>
+            <td>
+              <button onclick="editarPadre(${index})">Editar</button>
+              <button onclick="eliminarPadre(${index})">Eliminar</button>
+            </td>
+          </tr>`;
+      });
+    }
+
+    function editarPadre(index) {
+      const padre = padres[index];
+      document.getElementById('nombre').value = padre.nombre;
+      document.getElementById('apellido').value = padre.apellido;
+      document.getElementById('dni').value = padre.dni;
+      document.getElementById('hijo').value = padre.hijo;
+      document.getElementById('email').value = padre.email;
+      editIndex = index;
+    }
+
+    function eliminarPadre(index) {
+      if (confirm('¿Estás seguro de eliminar este padre/tutor?')) {
+        padres.splice(index, 1);
+        renderTabla();
+      }
+    }
+
+    function volverMenu() {
+      window.location.href = 'menu.html';
+    }
+  </script>
+</body>
+</html>

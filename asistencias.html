@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Asistencias</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="login-container">
+    <h2>Registro de Asistencias</h2>
+
+    <form id="form-asistencia">
+      <input type="text" id="nombre" placeholder="Nombre del alumno" required>
+      <input type="date" id="fecha" required>
+      <select id="estado" required>
+        <option value="Presente">Presente</option>
+        <option value="Tarde">Tarde (1/4 falta)</option>
+        <option value="Media falta">Media falta (1/2 falta)</option>
+        <option value="Ausente">Ausente</option>
+      </select>
+      <button type="submit">Registrar</button>
+    </form>
+
+    <h3>Listado de Asistencias</h3>
+    <table border="1" width="100%">
+      <thead>
+        <tr>
+          <th>Alumno</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-asistencias"></tbody>
+    </table>
+
+    <button onclick="volverMenu()">Volver al Menú</button>
+  </div>
+
+  <script>
+    let asistencias = JSON.parse(localStorage.getItem('asistencias')) || [];
+    let editIndex = null;
+
+    const form = document.getElementById('form-asistencia');
+    const tabla = document.getElementById('tabla-asistencias');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const asistencia = {
+        nombre: document.getElementById('nombre').value,
+        fecha: document.getElementById('fecha').value,
+        estado: document.getElementById('estado').value
+      };
+
+      if (editIndex === null) {
+        asistencias.push(asistencia);
+      } else {
+        asistencias[editIndex] = asistencia;
+        editIndex = null;
+      }
+
+      actualizarStorage();
+      form.reset();
+      renderTabla();
+    });
+
+    function renderTabla() {
+      tabla.innerHTML = '';
+      asistencias.forEach((asistencia, index) => {
+        tabla.innerHTML += `
+          <tr>
+            <td>${asistencia.nombre}</td>
+            <td>${asistencia.fecha}</td>
+            <td>${asistencia.estado}</td>
+            <td>
+              <button onclick="editarAsistencia(${index})">Editar</button>
+              <button onclick="eliminarAsistencia(${index})">Eliminar</button>
+            </td>
+          </tr>`;
+      });
+    }
+
+    function editarAsistencia(index) {
+      const asistencia = asistencias[index];
+      document.getElementById('nombre').value = asistencia.nombre;
+      document.getElementById('fecha').value = asistencia.fecha;
+      document.getElementById('estado').value = asistencia.estado;
+      editIndex = index;
+    }
+
+    function eliminarAsistencia(index) {
+      if (confirm('¿Estás seguro de eliminar este registro?')) {
+        asistencias.splice(index, 1);
+        actualizarStorage();
+        renderTabla();
+      }
+    }
+
+    function actualizarStorage() {
+      localStorage.setItem('asistencias', JSON.stringify(asistencias));
+    }
+
+    function volverMenu() {
+      window.location.href = 'menu.html';
+    }
+
+    // Mostrar registros guardados al cargar
+    renderTabla();
+  </script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contacto con Docente</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+    textarea {
+      resize: vertical;
+    }
+    .success {
+      background-color: #d4edda;
+      padding: 1rem;
+      border-radius: 5px;
+      margin-top: 1rem;
+      color: #155724;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Contactar al Docente</h2>
+
+    <form id="form-contacto">
+      <input type="text" id="nombrePadre" placeholder="Nombre del padre/tutor" required>
+      <input type="text" id="alumno" placeholder="Nombre del alumno" required>
+      <input type="text" id="asunto" placeholder="Asunto" required>
+      <textarea id="mensaje" placeholder="Escriba su mensaje aquí..." rows="5" required></textarea>
+      <button type="submit">Enviar mensaje</button>
+    </form>
+
+    <div id="confirmacion" class="success" style="display: none;">
+      ¡Mensaje enviado exitosamente!
+    </div>
+
+    <button onclick="volverMenu()">Volver al Menú</button>
+  </div>
+
+  <script>
+    const form = document.getElementById('form-contacto');
+    const confirmacion = document.getElementById('confirmacion');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      confirmacion.style.display = 'block';
+      form.reset();
+    });
+
+    function volverMenu() {
+      window.location.href = 'menu.html';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ABM Docentes</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="login-container">
+    <h2>Gestión de Docentes</h2>
+
+    <form id="form-docente">
+      <input type="text" id="nombre" placeholder="Nombre" required>
+      <input type="text" id="apellido" placeholder="Apellido" required>
+      <input type="text" id="dni" placeholder="DNI" required>
+      <input type="text" id="asignatura" placeholder="Asignatura" required>
+      <input type="email" id="email" placeholder="Email" required>
+      <button type="submit">Agregar Docente</button>
+    </form>
+
+    <h3>Listado de Docentes</h3>
+    <table border="1" width="100%">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Apellido</th>
+          <th>DNI</th>
+          <th>Asignatura</th>
+          <th>Email</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-docentes"></tbody>
+    </table>
+
+    <button onclick="volverMenu()">Volver al Menú</button>
+  </div>
+
+  <script>
+    let docentes = [];
+    let editIndex = null;
+
+    const form = document.getElementById('form-docente');
+    const tabla = document.getElementById('tabla-docentes');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const docente = {
+        nombre: document.getElementById('nombre').value,
+        apellido: document.getElementById('apellido').value,
+        dni: document.getElementById('dni').value,
+        asignatura: document.getElementById('asignatura').value,
+        email: document.getElementById('email').value
+      };
+
+      if (editIndex === null) {
+        docentes.push(docente);
+      } else {
+        docentes[editIndex] = docente;
+        editIndex = null;
+      }
+
+      form.reset();
+      renderTabla();
+    });
+
+    function renderTabla() {
+      tabla.innerHTML = '';
+      docentes.forEach((docente, index) => {
+        tabla.innerHTML += `
+          <tr>
+            <td>${docente.nombre}</td>
+            <td>${docente.apellido}</td>
+            <td>${docente.dni}</td>
+            <td>${docente.asignatura}</td>
+            <td>${docente.email}</td>
+            <td>
+              <button onclick="editarDocente(${index})">Editar</button>
+              <button onclick="eliminarDocente(${index})">Eliminar</button>
+            </td>
+          </tr>`;
+      });
+    }
+
+    function editarDocente(index) {
+      const docente = docentes[index];
+      document.getElementById('nombre').value = docente.nombre;
+      document.getElementById('apellido').value = docente.apellido;
+      document.getElementById('dni').value = docente.dni;
+      document.getElementById('asignatura').value = docente.asignatura;
+      document.getElementById('email').value = docente.email;
+      editIndex = index;
+    }
+
+    function eliminarDocente(index) {
+      if (confirm('¿Estás seguro de eliminar este docente?')) {
+        docentes.splice(index, 1);
+        renderTabla();
+      }
+    }
+
+    function volverMenu() {
+      window.location.href = 'menu.html';
+    }
+  </script>
+</body>
+</html>

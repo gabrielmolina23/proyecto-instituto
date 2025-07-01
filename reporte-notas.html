@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reporte de Notas</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .verde { background-color: #d4edda; }
+    .amarillo { background-color: #fff3cd; }
+    .rojo { background-color: #f8d7da; }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Reporte de Notas por Alumno</h2>
+
+    <table border="1" width="100%">
+      <thead>
+        <tr>
+          <th>Alumno</th>
+          <th>Cantidad de Notas</th>
+          <th>Promedio</th>
+          <th>Semáforo</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-reporte"></tbody>
+    </table>
+
+    <button onclick="volverMenu()">Volver al Menú</button>
+  </div>
+
+  <script>
+    const notas = JSON.parse(localStorage.getItem('notas')) || [];
+    const resumen = {};
+
+    notas.forEach(({ alumno, nota }) => {
+      if (!resumen[alumno]) resumen[alumno] = { total: 0, cantidad: 0 };
+      resumen[alumno].total += parseFloat(nota);
+      resumen[alumno].cantidad++;
+    });
+
+    const tabla = document.getElementById('tabla-reporte');
+
+    for (let alumno in resumen) {
+      const r = resumen[alumno];
+      const promedio = r.total / r.cantidad;
+
+      let clase = "";
+      let color = "";
+      if (promedio < 7) { clase = "rojo"; color = "Rojo"; }
+      else if (promedio < 8.5) { clase = "amarillo"; color = "Amarillo"; }
+      else { clase = "verde"; color = "Verde"; }
+
+      const tr = document.createElement('tr');
+      tr.className = clase;
+      tr.innerHTML = `
+        <td>${alumno}</td>
+        <td>${r.cantidad}</td>
+        <td>${promedio.toFixed(2)}</td>
+        <td>${color}</td>
+      `;
+      tabla.appendChild(tr);
+    }
+
+    function volverMenu() {
+      window.location.href = 'menu.html';
+    }
+  </script>
+</body>
+</html>

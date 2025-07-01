@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Desempeño del Alumno</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    section {
+      margin-bottom: 2rem;
+    }
+    h3 {
+      margin-bottom: 0.5rem;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 0.25rem;
+    }
+    table {
+      margin-bottom: 1rem;
+    }
+    .verde { background-color: #d4edda; }
+    .amarillo { background-color: #fff3cd; }
+    .rojo { background-color: #f8d7da; }
+    .grave { background-color: #ffe6e6; color: #d8000c; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Desempeño del Alumno</h2>
+
+    <section>
+      <h3>Notas</h3>
+      <table border="1" width="100%">
+        <thead><tr><th>Materia</th><th>Nota</th><th>Estado</th></tr></thead>
+        <tbody id="tabla-notas"></tbody>
+      </table>
+    </section>
+
+    <section>
+      <h3>Asistencias</h3>
+      <table border="1" width="100%">
+        <thead><tr><th>Fecha</th><th>Estado</th></tr></thead>
+        <tbody id="tabla-asistencias"></tbody>
+      </table>
+    </section>
+
+    <section>
+      <h3>Sanciones</h3>
+      <table border="1" width="100%">
+        <thead><tr><th>Fecha</th><th>Motivo</th><th>Tipo</th></tr></thead>
+        <tbody id="tabla-sanciones"></tbody>
+      </table>
+    </section>
+
+    <button onclick="volverMenu()">Volver al Menú</button>
+  </div>
+
+  <script>
+    const alumnoFiltrado = prompt("Ingrese el nombre del alumno a consultar:").trim().toLowerCase();
+
+    // Notas
+    const notas = JSON.parse(localStorage.getItem('notas')) || [];
+    const notasAlumno = notas.filter(n => n.alumno.toLowerCase() === alumnoFiltrado);
+    const tablaNotas = document.getElementById('tabla-notas');
+
+    notasAlumno.forEach(({ materia, nota }) => {
+      const promedio = parseFloat(nota);
+      let clase = '';
+      let estado = '';
+      if (promedio < 7) { clase = 'rojo'; estado = 'Rojo'; }
+      else if (promedio < 8.5) { clase = 'amarillo'; estado = 'Amarillo'; }
+      else { clase = 'verde'; estado = 'Verde'; }
+
+      const tr = document.createElement('tr');
+      tr.className = clase;
+      tr.innerHTML = `<td>${materia}</td><td>${nota}</td><td>${estado}</td>`;
+      tablaNotas.appendChild(tr);
+    });
+
+    // Asistencias
+    const asistencias = JSON.parse(localStorage.getItem('asistencias')) || [];
+    const asistenciasAlumno = asistencias.filter(a => a.nombre.toLowerCase() === alumnoFiltrado);
+    const tablaAsistencias = document.getElementById('tabla-asistencias');
+
+    asistenciasAlumno.forEach(({ fecha, estado }) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${fecha}</td><td>${estado}</td>`;
+      tablaAsistencias.appendChild(tr);
+    });
+
+    // Sanciones
+    const sanciones = JSON.parse(localStorage.getItem('sanciones')) || [];
+    const sancionesAlumno = sanciones.filter(s => s.alumno.toLowerCase() === alumnoFiltrado);
+    const tablaSanciones = document.getElementById('tabla-sanciones');
+
+    sancionesAlumno.forEach(({ fecha, motivo, tipo }) => {
+      const tr = document.createElement('tr');
+      if (tipo === 'Condicional' || tipo === 'Expulsión') tr.className = 'grave';
+      tr.innerHTML = `<td>${fecha}</td><td>${motivo}</td><td>${tipo}</td>`;
+      tablaSanciones.appendChild(tr);
+    });
+
+    function volverMenu() {
+      window.location.href = 'menu.html';
+    }
+  </script>
+</body>
+</html>

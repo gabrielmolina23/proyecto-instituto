@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menú Principal</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .menu-btn {
+      display: block;
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      font-size: 1rem;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+    }
+    .menu-btn:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Menú Principal</h2>
+    <p id="bienvenida"></p>
+
+    <div id="menu-opciones"></div>
+
+    <button onclick="cerrarSesion()">Cerrar sesión</button>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const rol = params.get('rol');
+
+    const bienvenida = document.getElementById('bienvenida');
+    const menu = document.getElementById('menu-opciones');
+
+    let opciones = [];
+//en los # hay que poner los enlaces a las demas paginas xd
+    switch(rol) {
+      case 'docente':
+        bienvenida.textContent = "Bienvenido/a Docente";
+        opciones = [
+          { texto: "Cargar Notas", link: "carga-notas.html" },
+          { texto: "Ver Alumnos", link: "ver-alumnos.html" },
+          { texto: "ABM Alumnos", link: "abm-alumnos.html" },
+          { texto: "ABM Docentes", link: "abm-docentes.html" },
+          { texto: "Registro de Sanciones", link: "sanciones.html" }
+        ];
+        break;
+      case 'preceptor':
+        bienvenida.textContent = "Bienvenido/a Preceptor";
+        opciones = [
+          { texto: "Registro de Asistencias", link: "asistencias.html" },
+          { texto: "Registro de Sanciones", link: "sanciones.html" },
+          { texto: "Reporte de Asistencias", link: "reporte-asistencias.html" },
+          { texto: "Reporte de Sanciones", link: "reporte-sanciones.html" },
+          { texto: "Reporte de Notas por alumno", link: "reporte-notas.html" },
+          { texto: "ABM Alumnos", link: "abm-alumnos.html" },
+          { texto: "ABM Padres", link: "abm-padres.html" },
+          { texto: "ABM Docentes", link: "abm-docentes.html" }
+        ];
+        break;
+      case 'padre':
+        bienvenida.textContent = "Bienvenido/a Padre o Tutor";
+        opciones = [
+          { texto: "Ver Notas - asistencias - sanciones", link: "seguimiento-alumno.html" },
+          { texto: "Contactar Docente", link: "contacto-docente.html" }
+        ];
+        break;
+      default:
+        bienvenida.textContent = "Bienvenido/a";
+        opciones = [
+          { texto: "Opción 1", link: "#" },
+          { texto: "Opción 2", link: "#" }
+        ];
+    }
+
+    opciones.forEach(op => {
+      const btn = document.createElement('a');
+      btn.textContent = op.texto;
+      btn.href = op.link;
+      btn.className = 'menu-btn';
+      menu.appendChild(btn);
+    });
+
+    function cerrarSesion() {
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>
